@@ -114,7 +114,7 @@ case "$#" in
                 set user_host \"$USER_HOST\"
                 set port \"$PORT\"
                 log_user 0
-                spawn ssh -p \$port \$user_host -o StrictHostKeyChecking=no
+                spawn ssh -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no -p \$port \$user_host 
                 log_user 1
                 expect {
                     \"password:\" {
@@ -210,7 +210,7 @@ case "$#" in
                 set first \"$first_path\"
                 set second \"$second_path\"
                 log_user 0
-                spawn scp  -o StrictHostKeyChecking=no -r -P \$port \$first \$second
+                spawn scp -o ServerAliveInterval=60 -o ServerAliveCountMax=3 -o StrictHostKeyChecking=no -r -P \$port \$first \$second
                 log_user 1
                 expect {
                     \"password:\" {
