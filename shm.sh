@@ -4,8 +4,8 @@ help() {
     echo "$0 ls"
     echo "$0 add nickname user@example.com 22 password"
     echo "$0 rm nickname "
-    echo "$0 cp nickname:/tmp/1.txt ."
-    echo "$0 cp 1.txt nickname:/tmp"
+    echo "$0 cp nickname:/tmp/example.txt ."
+    echo "$0 cp example.txt nickname:/tmp"
 }
 select_option() {
 clear
@@ -66,7 +66,7 @@ echo -e "Enter $0 help for help\n"
 }
 
 # pre check util
-commands=("xxd" "base64" "expect")
+commands=("xxd" "base64" "expect" "ssh" "scp")
 for cmd in "${commands[@]}"; do
     if ! which "$cmd" >/dev/null 2>&1; then
         echo "Error: $cmd command is not available."
