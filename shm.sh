@@ -171,7 +171,67 @@ case "$#" in
         done
         ;;
     3)
-        echo "cp file to"
+    # copy file
+    #     echo "$0 cp nickname:/tmp/example.txt ."
+    # echo "$0 cp example.txt nickname:/tmp"
+        if [ "$1" != "cp" ]; then
+            echo "Use correct operater"
+            exit 2
+        fi
+
+        first_path=$2
+        second_path=$3
+        
+        if [[ "$first_path" == *:* ]]; then
+            nickname="${first_path%%:*}"
+        elif [[ "$second_path" == *:* ]]; then
+            nickname="${second_path%%:*}"
+        else
+            echo "Use correct file path"
+            exit 5
+        fi
+
+        for (( i=0; i<$length; i++ )); do
+            read -r -a each <<< "${data[$i]}"
+            if [ "$nickname" = "${each[0]}" ]; then
+                
+                if [[ "$first_path" == *:* ]]; then
+                    first_path="${first_path//$nickname/${each[1]}}"
+                elif [[ "$second_path" == *:* ]]; then
+                    second_path="${second_path//$nickname/${each[1]}}"
+                fi
+                
+                PORT="${each[2]}"
+                PASSWORD="`echo ${each[3]} | base64 -d | xxd -r -p`"
+
+                expect -c "
+                set port \"$PORT\"
+                set first \"$first_path\"
+                set second \"$second_path\"
+                spawn scp  -o StrictHostKeyChecking=no -r -P \$port \$first \$second
+                expect {
+                    \"password:\" {
+                        send \"$PASSWORD\r\"
+                    }
+                    # 处理连接问题
+                    \"Permission denied\" {
+                        puts \"Permission denied. Please check your credentials.\"
+                        exit 1
+                    }
+                    \"Could not resolve hostname\" {
+                        puts \"Could not resolve hostname. Please check the host address.\"
+                        exit 1
+                    }
+                }
+                interact
+                "
+
+                break
+            fi
+        done
+        # first_path second_path replace user_host
+        # scp -r -P 22  -o StrictHostKeyChecking=no
+        # echo "cp file to"
         ;;
     5)
     # add target
