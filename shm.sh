@@ -113,8 +113,9 @@ case "$#" in
             expect -c "
                 set user_host \"$USER_HOST\"
                 set port \"$PORT\"
-
+                log_user 0
                 spawn ssh -p \$port \$user_host -o StrictHostKeyChecking=no
+                log_user 1
                 expect {
                     \"password:\" {
                         send \"$PASSWORD\r\"
@@ -208,7 +209,9 @@ case "$#" in
                 set port \"$PORT\"
                 set first \"$first_path\"
                 set second \"$second_path\"
+                log_user 0
                 spawn scp  -o StrictHostKeyChecking=no -r -P \$port \$first \$second
+                log_user 1
                 expect {
                     \"password:\" {
                         send \"$PASSWORD\r\"
